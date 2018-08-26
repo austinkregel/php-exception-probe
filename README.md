@@ -1,27 +1,33 @@
 # Very short description of the package
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/php-exception-probe.svg?style=flat-square)](https://packagist.org/packages/spatie/php-exception-probe)
-[![Build Status](https://img.shields.io/travis/spatie/php-exception-probe/master.svg?style=flat-square)](https://travis-ci.org/spatie/php-exception-probe)
-[![Quality Score](https://img.shields.io/scrutinizer/g/spatie/php-exception-probe.svg?style=flat-square)](https://scrutinizer-ci.com/g/spatie/php-exception-probe)
-[![Total Downloads](https://img.shields.io/packagist/dt/spatie/php-exception-probe.svg?style=flat-square)](https://packagist.org/packages/spatie/php-exception-probe)
-
-**Note:** Replace ```Austin Kregel``` ```:author_username``` ```:author_email``` ```php-exception-probe``` ```:package_description``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md) and [composer.json](composer.json) files, then delete this line.
-
-This is where your description should go. Try and limit it to a paragraph or two.
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/kregel/php-exception-probe.svg?style=flat-square)](https://packagist.org/packages/kregel/php-exception-probe)
+[![Total Downloads](https://img.shields.io/packagist/dt/kregel/php-exception-probe.svg?style=flat-square)](https://packagist.org/packages/kregel/php-exception-probe)
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require spatie/php-exception-probe
+composer require kregel/exception-probe
 ```
 
 ## Usage
 
 ``` php
-$skeleton = new Spatie\Skeleton();
-echo $skeleton->echoPhrase('Hello, Spatie!');
+$stacktrace = new Kregel\ExceptionProbe\Stacktrace();
+echo $stacktrace->parse('ErrorException: The thing that was suppose to do stuff broke
+#0 /usr/share/php/test/index.php(34): Kernel->run()
+#1 /usr/share/php/test/Framework/file-thing.php(143): SomeClass->doTheThing()
+#2 /usr/share/php/PHPUnit/Framework/TestCase.php(626): SeriesHelperTest->setUp()
+#3 /usr/share/php/PHPUnit/Framework/TestResult.php(666): PHPUnit_Framework_TestCase->runBare()
+#4 /usr/share/php/PHPUnit/Framework/TestCase.php(576): PHPUnit_Framework_TestResult->run(Object(SeriesHelperTest))
+#5 /usr/share/php/PHPUnit/Framework/TestSuite.php(757): PHPUnit_Framework_TestCase->run(Object(PHPUnit_Framework_TestResult))
+#6 /usr/share/php/PHPUnit/Framework/TestSuite.php(733): PHPUnit_Framework_TestSuite->runTest(Object(SeriesHelperTest), Object(PHPUnit_Framework_TestResult))
+#7 /usr/share/php/PHPUnit/TextUI/TestRunner.php(305): PHPUnit_Framework_TestSuite->run(Object(PHPUnit_Framework_TestResult), false, Array, Array, false)
+#8 /usr/share/php/PHPUnit/TextUI/Command.php(188): PHPUnit_TextUI_TestRunner->doRun(Object(PHPUnit_Framework_TestSuite), Array)
+#9 /usr/share/php/PHPUnit/TextUI/Command.php(129): PHPUnit_TextUI_Command->run(Array, true)
+#10 /usr/bin/phpunit(53): PHPUnit_TextUI_Command::main()
+#11 {main}"');
 ```
 
 ### Testing
@@ -40,27 +46,12 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ### Security
 
-If you discover any security related issues, please email freek@spatie.be instead of using the issue tracker.
-
-## Postcardware
-
-You're free to use this package, but if it makes it to your production environment we highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using.
-
-Our address is: Spatie, Samberstraat 69D, 2060 Antwerp, Belgium.
-
-We publish all received postcards [on our company website](https://spatie.be/en/opensource/postcards).
+If you discover any security related issues, please email security@kbcomp.co instead of using the issue tracker.
 
 ## Credits
 
 - [Austin Kregel](https://github.com/:author_username)
 - [All Contributors](../../contributors)
-
-## Support us
-
-Spatie is a webdesign agency based in Antwerp, Belgium. You'll find an overview of all our open source projects [on our website](https://spatie.be/opensource).
-
-Does your business depend on our contributions? Reach out and support us on [Patreon](https://www.patreon.com/spatie). 
-All pledges will be dedicated to allocating workforce on maintenance and new awesome stuff.
 
 ## License
 
