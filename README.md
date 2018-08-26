@@ -1,7 +1,7 @@
 # Very short description of the package
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/kregel/php-exception-probe.svg?style=flat-square)](https://packagist.org/packages/kregel/php-exception-probe)
-[![Total Downloads](https://img.shields.io/packagist/dt/kregel/php-exception-probe.svg?style=flat-square)](https://packagist.org/packages/kregel/php-exception-probe)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/kregel/exception-probe.svg?style=flat-square)](https://packagist.org/packages/kregel/exception-probe)
+[![Total Downloads](https://img.shields.io/packagist/dt/kregel/exception-probe.svg?style=flat-square)](https://packagist.org/packages/kregel/exception-probe)
 
 ## Installation
 
@@ -50,7 +50,7 @@ If you discover any security related issues, please email security@kbcomp.co ins
 
 ## Credits
 
-- [Austin Kregel](https://github.com/:author_username)
+- [Austin Kregel](https://github.com/austinkregel)
 - [All Contributors](../../contributors)
 
 ## License
