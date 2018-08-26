@@ -87,7 +87,6 @@ class Stacktrace
     {
         $this->codeFrames = array_values(array_filter(array_map(function ($line) {
             if (count($line) == 1) {
-                echo 'Trace is not cool', "\n";
                 return;
             }
 
@@ -97,7 +96,6 @@ class Stacktrace
                 [$frame, $line, $file] = $this->parseFrame($mainFrame);
 
                 if (!$this->validateTheFile($file)) {
-                    echo 'This file is not valid: ', $file, "\n";
                     return;
                 }
 
@@ -161,21 +159,18 @@ class Stacktrace
     {
         // If there's no file we can't do anything with it...
         if (empty($file)) {
-            echo 'This file is empty', "\n";
             return false;
         }
 
         // If the file doesn't exist, no need to try and get it.
         if (!file_exists($file)) {
             // We should probably log here...
-            echo 'This file does not exist', "\n";
             return false;
         }
 
         // If we can't read the file... Why try...
         if (!is_readable($file)) {
             // We should probably log or something here...
-            echo 'This file is not readable', "\n";
             return false;
         }
 
