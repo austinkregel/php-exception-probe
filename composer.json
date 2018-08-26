@@ -1,0 +1,41 @@
+{
+    "name": "kregel/exception-probe",
+    "description": "A package to help get more information from stack traces, and exceptions",
+    "keywords": [
+        "php-exception-probe"
+    ],
+    "homepage": "https://github.com/kregel/php-exception-probe",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Austin Kregel",
+            "email": "github@austinkregel.com",
+            "homepage": "https://austinkregel.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kregel\\ExceptionProbe\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kregel\\ExceptionProbe\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
