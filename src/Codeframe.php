@@ -11,22 +11,22 @@ class Codeframe
     /**
      * @var string
      */
-    protected $file;
+    public $file;
 
     /**
      * @var int
      */
-    protected $line;
+    public $line;
 
     /**
      * @var
      */
-    protected $frame;
+    public $frame;
 
     /**
      * Code lines
      */
-    protected $code;
+    public $code;
 
     /**
      * @return string

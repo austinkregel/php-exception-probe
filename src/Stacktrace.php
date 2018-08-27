@@ -49,8 +49,12 @@ class Stacktrace
      */
     public function parse(?string $stackTrace = null): array
     {
-        if (!$this->stacktrace || !$stackTrace) {
+        if (empty($this->stacktrace) && !empty($stackTrace)) {
             $this->stacktrace = $stackTrace;
+        }
+
+        if (empty($this->stacktrace)) {
+            throw new \InvalidArgumentException('You must pass a stacktrace otherwise we cannot do our job...');
         }
 
         return $this->breakUpTheStacks()->getFilesFromBrokenMap()->codeFrames;
