@@ -84,7 +84,7 @@ class Stacktrace
 
         $otherFile = preg_split('/(?<=[\:])/', $otherFile, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-        array_unshift($stack, sprintf('#00 /%s(%d): ', trim($otherFile[0], ':'), $otherFile[1]));
+//        array_unshift($stack, sprintf('#00 /%s(%d): ', trim($otherFile[0], ':'), $otherFile[1]));
 
         $this->brokenMap = array_map(function ($frame) {
             return preg_split('/(?<=[\):?])/', $frame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
@@ -104,10 +104,11 @@ class Stacktrace
                 return;
             }
 
-            [$mainFrame] = $line;
+            [$mainFrame, $_, $frame] = $line;
+
             // We only want to parse the files that are PHP files for now... We don't care about other files...
             if (stripos($mainFrame, '.php') !== false) {
-                [$frame, $line, $file] = $this->parseFrame($mainFrame);
+                [$_, $line, $file] = $this->parseFrame($mainFrame);
 
                 if (!$this->validateTheFile($file)) {
                     return;
@@ -115,7 +116,7 @@ class Stacktrace
 
                 $linesOfCode = $this->getTheCodeFromTheFile($file, $line);
 
-                return new Codeframe($file, $line, $linesOfCode, $frame);
+                return new Codeframe($file, $line, $linesOfCode, trim($frame));
             }
         }, $this->brokenMap)));
 
