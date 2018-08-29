@@ -22,7 +22,7 @@ class Stacktrace
     /**
      * @var array
      */
-    protected $message;
+    public $message;
 
     /**
      * @var Codeframe[]
@@ -76,6 +76,16 @@ class Stacktrace
             return stripos($input, 'stack trace') === false;
         }));
 
+        foreach($this->message as $message) {
+            [$message, $otherFile] = explode(' in /', $message);
+        }
+
+        $this->message = $message;
+
+        $otherFile = preg_split('/(?<=[\:])/', $otherFile, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+        array_unshift($stack, sprintf('#00 /%s(%d): ', trim($otherFile[0], ':'), $otherFile[1]));
+
         $this->brokenMap = array_map(function ($frame) {
             return preg_split('/(?<=[\):?])/', $frame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
         }, $stack);
@@ -119,11 +129,18 @@ class Stacktrace
      */
     protected function parseFrame($mainFrame): array
     {
-        [$frame, $line] = preg_split('/(?<=(\.php))/', $mainFrame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $splitFrame = preg_split('/(?<=(\.php))/', $mainFrame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        [$frame, $line] = $splitFrame;
+
+        $realFrame = $frame;
+        if (count($splitFrame) > 2) {
+            $realFrame = $splitFrame[2];
+        }
+
         [$file] = array_values(array_filter(preg_split('/#\d+\s/', $frame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY)));
         $lineNumber = (int) str_replace(['(', ')'], '', $line);
 
-        return [$frame, $lineNumber, trim($file)];
+        return [$realFrame, $lineNumber, trim($file)];
     }
 
     /**
