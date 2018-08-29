@@ -162,6 +162,10 @@ class Stacktrace
 
             $line = fgets($handle);
 
+            if ($line === false) {
+                break;
+            }
+
             if (($currentLine - $lineNumber) > -static::NUMBER_OF_LINES_TO_DISPLAY && ($currentLine - $lineNumber) < static::NUMBER_OF_LINES_TO_DISPLAY) {
                 $linesOfCode[$currentLine] = $line;
             }
