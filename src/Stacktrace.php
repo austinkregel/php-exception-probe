@@ -84,7 +84,7 @@ class Stacktrace
 
         $otherFile = preg_split('/(?<=[\:])/', $otherFile, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-//        array_unshift($stack, sprintf('#00 /%s(%d): ', trim($otherFile[0], ':'), $otherFile[1]));
+        array_unshift($stack, sprintf('#00 /%s(%d): ', trim($otherFile[0], ':'), $otherFile[1]));
 
         $this->brokenMap = array_map(function ($frame) {
             return preg_split('/(?<=[\):?])/', $frame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
