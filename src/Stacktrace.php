@@ -77,7 +77,10 @@ class Stacktrace
         }));
 
         foreach($this->message as $message) {
-            [$message, $otherFile] = explode(' in /', $message);
+            $otherFile = '';
+            if (strpos($message, ' in /') !== false) {
+                [$message, $otherFile] = explode(' in /', $message);
+            }
         }
 
         $this->message = $message;
