@@ -56,3 +56,8 @@ If you discover any security related issues, please email security@kbcomp.co ins
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/austinkregel/php-exception-probe/badge.svg?style=beer-square)](https://beerpay.io/austinkregel/php-exception-probe)  [![Beerpay](https://beerpay.io/austinkregel/php-exception-probe/make-wish.svg?style=flat-square)](https://beerpay.io/austinkregel/php-exception-probe?focus=wish)
