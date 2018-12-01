@@ -4,35 +4,33 @@ namespace Kregel\ExceptionProbe;
 
 class Stacktrace
 {
-    /**
-     * @var string
-     */
-    protected $stacktrace;
-
-    /**
-     * @var array
-     */
-    protected $brokenStackTrace;
-
-    /**
-     * @var array
-     */
-    protected $brokenMap;
-
-    /**
-     * @var array
-     */
-    public $message;
-
-    /**
-     * @var Codeframe[]
-     */
-    protected $codeFrames;
-
+    protected const REGEX_STACK_PART = '/#\d+ (.*)\((\d+)\): (.*)/';
+    protected const REGEX_STACK_MESSAGE = '/(.*)in (\/.*:\d+$)/';
+    protected const REGEX_STACK_LOOKBACK = '/(?<=(\.php))/';
     /**
      * @const int The number of lines of code we want to grab.
      */
     public const NUMBER_OF_LINES_TO_DISPLAY = 5;
+    /**
+     * @var array
+     */
+    public $message;
+    /**
+     * @var string
+     */
+    protected $stacktrace;
+    /**
+     * @var array
+     */
+    protected $brokenStackTrace;
+    /**
+     * @var array
+     */
+    protected $brokenMap;
+    /**
+     * @var Codeframe[]
+     */
+    protected $codeFrames;
 
     /**
      * Stacktrace constructor.
@@ -61,87 +59,28 @@ class Stacktrace
     }
 
     /**
-     * We need to parse the lines that have a file in them, the lines that don't have a file in them, and a stack trace message.
-     * @return $this
-     */
-    protected function breakUpTheStacks()
-    {
-        $this->brokenStackTrace = explode("\n", $this->stacktrace);
-
-        $stack = array_values(array_filter($this->brokenStackTrace, function ($input) {
-            return stripos($input, '#') !== false;
-        }));
-
-        $this->message = array_values(array_filter(array_diff($this->brokenStackTrace, $stack), function ($input) {
-            return stripos($input, 'stack trace') === false;
-        }));
-
-        foreach($this->message as $message) {
-            [$message, $otherFile] = explode(' in /', $message);
-        }
-
-        $this->message = $message;
-
-        $otherFile = preg_split('/(?<=[\:])/', $otherFile, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-
-        array_unshift($stack, sprintf('#00 /%s(%d): ', trim($otherFile[0], ':'), $otherFile[1]));
-
-        $this->brokenMap = array_map(function ($frame) {
-            return preg_split('/(?<=[\):?])/', $frame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        }, $stack);
-
-        return $this;
-    }
-
-    /**
      * Convert the frame into a CodeFrame which includes relative code.
      * @return $this
      */
     protected function getFilesFromBrokenMap()
     {
-        $this->codeFrames = array_values(array_filter(array_map(function ($line) {
-            if (count($line) == 1) {
-                return;
+        $mapParts = array_filter($this->brokenMap);
+
+        $this->codeFrames = array_values(array_map(function ($frame) {
+            if (count($frame) === 3) {
+                [$file, $linesOfCode, $line] = $frame;
             }
 
-            [$mainFrame, $_, $frame] = $line;
-
-            // We only want to parse the files that are PHP files for now... We don't care about other files...
-            if (stripos($mainFrame, '.php') !== false) {
-                [$_, $line, $file] = $this->parseFrame($mainFrame);
-
-                if (!$this->validateTheFile($file)) {
-                    return;
-                }
-
-                $linesOfCode = $this->getTheCodeFromTheFile($file, $line);
-
-                return new Codeframe($file, $line, $linesOfCode, trim($frame));
+            if (!$this->isValidFile($file)) {
+                return new Codeframe($file, 0, [], trim($line));
             }
-        }, $this->brokenMap)));
+
+            $codes = $this->getTheCodeFromTheFile($file, (int) $linesOfCode);
+
+            return new Codeframe($file, (int) $linesOfCode, $codes, trim($line));
+        }, $mapParts));
 
         return $this;
-    }
-
-    /**
-     * Break the frame of a stack trace into three pars, the frame, the line number, and the file itself.
-     * @param $mainFrame
-     * @return array
-     */
-    protected function parseFrame($mainFrame): array
-    {
-        $splitFrame = preg_split('/(?<=(\.php))/', $mainFrame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        [$frame, $line] = $splitFrame;
-
-        $realFrame = $frame;
-        if (count($splitFrame) > 2) {
-            $realFrame = $splitFrame[2];
-        }
-
-        [$file] = array_values(array_filter(preg_split('/#\d+\s/', $frame, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY)));
-        $lineNumber = (int) str_replace(['(', ')'], '', $line);
-
-        return [$realFrame, $lineNumber, trim($file)];
     }
 
     /**
@@ -151,7 +90,7 @@ class Stacktrace
      * @param int $currentLine
      * @return array
      */
-    protected function getTheCodeFromTheFile($file, $lineNumber, $currentLine = 0): array
+    protected function getTheCodeFromTheFile(string $file, int $lineNumber, int $currentLine = 0): array
     {
         $handle = fopen($file, "r");
 
@@ -177,11 +116,49 @@ class Stacktrace
     }
 
     /**
+     * We need to parse the lines that have a file in them, the lines that don't have a file in them, and a stack trace message.
+     * @return $this
+     */
+    protected function breakUpTheStacks()
+    {
+        $this->brokenStackTrace = explode("\n", $this->stacktrace);
+
+        $stack = array_values(array_filter($this->brokenStackTrace, function ($input) {
+            return stripos($input, '#') !== false;
+        }));
+
+        $newMessage = array_values(array_filter(array_diff($this->brokenStackTrace, $stack), function ($input) {
+            return stripos($input, 'stack trace') === false;
+        }));
+
+        if (empty($newMessage)) {
+            $this->message = '';
+        } else {
+            $newMessage = $newMessage[0];
+            preg_match_all(static::REGEX_STACK_MESSAGE, $newMessage, $match);
+
+            $this->message = $match[1][0];
+        }
+
+        $this->brokenMap = array_map(function ($frame) {
+            preg_match_all(static::REGEX_STACK_PART, $frame, $matches);
+
+            $parts = array_filter(array_map(function ($match) {
+                return $match[0] ?? null;
+            }, $matches));
+
+            return array_splice($parts, 1, count($parts));
+        }, $stack);
+
+        return $this;
+    }
+
+    /**
      * See if the file is empty, if it exists, or if it's readable.
      * @param $file
      * @return bool
      */
-    protected function validateTheFile($file): bool
+    protected function isValidFile($file): bool
     {
         // If there's no file we can't do anything with it...
         if (empty($file)) {
