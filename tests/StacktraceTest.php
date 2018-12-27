@@ -96,4 +96,27 @@ class StacktraceTest extends TestCase
         $this->assertSame('App\Domain\Service\GitHub->__construct(Object(App\Social))', $firstCodeframe->frame);
         $this->assertCount(0, $firstCodeframe->code);
     }
+
+    public function testWeCanHandlePDOBasedExceptions()
+    {
+        $exceptionString = <<<EOS
+PDOException: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "1967-12-0"
+HINT:  Perhaps you need a different "datestyle" setting. in /home/austinkregel/Sites/lager/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOStatement.php:142
+Stack trace:
+#0 /home/austinkregel/Sites/lager/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOStatement.php(142): PDOStatement->execute(NULL)
+#1 /home/austinkregel/Sites/lager/vendor/laravel/framework/src/Illuminate/Database/Connection.php(330): Doctrine\DBAL\Driver\PDOStatement->execute()
+#2 /home/austinkregel/Sites/lager/vendor/laravel/framework/src/Illuminate/Database/Connection.php(657): Illuminate\Database\Connection->Illuminate\Database\{closure}('insert into "ta...', Array)
+EOS
+        ;
+
+        $array = $this->stacktrace->parse($exceptionString);
+        $this->assertTrue(is_array($array));
+        $this->assertTrue(!empty($array));
+
+        $firstCodeframe = $array[0];
+        $this->assertInstanceOf(Codeframe::class, $firstCodeframe);
+        $this->assertSame('/home/austinkregel/Sites/lager/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOStatement.php', $firstCodeframe->file);
+        $this->assertSame('PDOStatement->execute(NULL)', $firstCodeframe->frame);
+        $this->assertCount(0, $firstCodeframe->code);
+    }
 }
