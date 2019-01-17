@@ -99,15 +99,7 @@ class StacktraceTest extends TestCase
 
     public function testWeCanHandlePDOBasedExceptions()
     {
-        $exceptionString = <<<EOS
-PDOException: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: "1967-12-0"
-HINT:  Perhaps you need a different "datestyle" setting. in /home/austinkregel/Sites/lager/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOStatement.php:142
-Stack trace:
-#0 /home/austinkregel/Sites/lager/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOStatement.php(142): PDOStatement->execute(NULL)
-#1 /home/austinkregel/Sites/lager/vendor/laravel/framework/src/Illuminate/Database/Connection.php(330): Doctrine\DBAL\Driver\PDOStatement->execute()
-#2 /home/austinkregel/Sites/lager/vendor/laravel/framework/src/Illuminate/Database/Connection.php(657): Illuminate\Database\Connection->Illuminate\Database\{closure}('insert into "ta...', Array)
-EOS
-        ;
+        $exceptionString = "PDOException: SQLSTATE[22008]: Datetime field overflow: 7 ERROR:  date/time field value out of range: \"1967-12-0\"\nHINT:  Perhaps you need a different \"datestyle\" setting. in /home/austinkregel/Sites/lager/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOStatement.php:142\nStack trace:\n#0 /home/austinkregel/Sites/lager/vendor/doctrine/dbal/lib/Doctrine/DBAL/Driver/PDOStatement.php(142): PDOStatement->execute(NULL)\n#1 /home/austinkregel/Sites/lager/vendor/laravel/framework/src/Illuminate/Database/Connection.php(330): Doctrine\DBAL\Driver\PDOStatement->execute()\n#2 /home/austinkregel/Sites/lager/vendor/laravel/framework/src/Illuminate/Database/Connection.php(657): Illuminate\Database\Connection->Illuminate\Database\{closure}('insert into \"ta...', Array)";
 
         $array = $this->stacktrace->parse($exceptionString);
         $this->assertTrue(is_array($array));
