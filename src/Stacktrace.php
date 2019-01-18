@@ -137,7 +137,7 @@ class Stacktrace
             $newMessage = $newMessage[0];
             preg_match_all(static::REGEX_STACK_MESSAGE, $newMessage, $match);
 
-            $this->message = $match[1][0];
+            $this->message = $match[1][0] ?? $newMessage;
         }
 
         $this->brokenMap = array_map(function ($frame) {
