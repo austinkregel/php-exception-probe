@@ -28,36 +28,27 @@ class Codeframe
      */
     public $code;
 
-    /**
-     * @return string
-     */
-    public function getFile(): string
-    {
-        return $this->file;
-    }
-
-    /**
-     * @param string $file
-     * @return Codeframe
-     */
-    public function setFile(string $file): Codeframe
-    {
-        $this->file = $file;
-        return $this;
-    }
-
-    /**
-     * StackAndCode constructor.
-     * @param string $file
-     * @param int $line
-     * @param array $code
-     * @param string $frame
-     */
     public function __construct(string $file, int $line, array $code, string $frame)
     {
         $this->setFile($file);
         $this->line = $line;
         $this->code = $code;
         $this->frame = $frame;
+    }
+
+    public function getFile(): string
+    {
+        return $this->file;
+    }
+
+    public function setFile(string $file): Codeframe
+    {
+        $this->file = $file;
+        return $this;
+    }
+
+    public function blame(): Blame
+    {
+        return (new GitBlameFinder)->blame($this->file)[$this->line];
     }
 }
